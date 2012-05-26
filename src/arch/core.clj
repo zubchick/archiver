@@ -20,21 +20,25 @@
 
   ([prob-map start end]
      (let [k (- end start)]
-       (loop [xs (transient [start])
+       (loop [xs (transient {})
               current start
               table prob-map]
          (if (empty? table)
            (persistent! xs)
-           (let [[_ prob] (first table)
+           (let [[chr prob] (first table)
                  new (+ current (* k prob))]
-             (recur (conj! xs new)
+             (recur (assoc! xs chr [current new])
                     new
                     (rest table))))))))
 
-(defn find-interval [iseq num]
-  (let [fst (first iseq)
-        snd (second iseq)]
-    (if (< num snd)
-      [fst snd]
-      (recur (rest iseq) num))))
+(defn find-interval [imap num]
+  (let [start (first (second (first imap)))
+        iseq (cons start
+                   (for [[_ [_ snd]] imap] snd))]
+    (loop [xs iseq]
+      (let [fst (first xs)
+            snd (second xs)]
+          (if (< num snd)
+            [fst snd]
+            (recur (rest xs)))))))
 
