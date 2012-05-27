@@ -8,7 +8,9 @@
          table (transient {})
          count 0]
     (if (== c -1)
-      (into {} (for [[k v] (persistent! table)] [(char k) (/ v count)]))
+      (list count
+            (into {} (for [[k v] (persistent! table)]
+                       [(char k) (/ v count)])))
       (recur (.read stream)
              (assoc! table c (+ 1 (get table c 0)))
              (inc count)))))
