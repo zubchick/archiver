@@ -42,3 +42,12 @@
             [fst snd]
             (recur (rest xs)))))))
 
+(defn encode [schema, stream]
+  (loop [chr (.read stream)
+         interval [0 1]]
+    (let [[fst snd] interval]
+      (if (== chr -1)
+        (/  (+ fst snd) 2)             ; middle of interval
+        (let [ints (intervals schema fst snd) ; new interval-map
+              [start end] (ints (char chr))] ; find new interval
+          (recur (.read stream) [start end]))))))
