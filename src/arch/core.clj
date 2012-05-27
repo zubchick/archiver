@@ -34,15 +34,12 @@
                     (rest table))))))))
 
 (defn find-interval [imap num]
-  (let [start (first (second (first imap)))
-        iseq (cons start
-                   (for [[_ [_ snd]] imap] snd))]
-    (loop [xs iseq]
-      (let [fst (first xs)
-            snd (second xs)]
-          (if (< num snd)
-            [fst snd]
-            (recur (rest xs)))))))
+  (loop [xs (seq imap)]
+    (if-let [[char [start end]] (first xs)]
+      (if (and (>= num start)
+               (< num end))
+        char
+        (recur (rest xs))))))
 
 (defn encode [schema, stream]
   (loop [chr (.read stream)
