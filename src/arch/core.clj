@@ -34,10 +34,10 @@
                     (rest table))))))))
 
 (defn find-interval [imap num]
-  (loop [xs (seq imap)]
+  (loop [xs (lazy-seq imap)]
     (if-let [[char [start end]] (first xs)]
-      (if (and (>= num start)
-               (< num end))
+      (if (and (< num end)
+               (>= num start))
         [char, start, end]
         (recur (rest xs))))))
 
