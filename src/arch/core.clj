@@ -51,10 +51,9 @@
         (recur (.read stream) start end)))))
 
 (defn decode [schema number length]
-  (defn- help-f [i fst snd]
-    (when (< i length)
-      (let [ints (intervals schema fst snd)
-            [char start end] (find-interval ints number)]
-        (cons char (lazy-seq (help-f (inc i) start end))))))
+  (defn- help-f [fst snd]
+    (let [ints (intervals schema fst snd)
+          [char start end] (find-interval ints number)]
+      (cons char (lazy-seq (help-f start end)))))
 
-  (help-f 0 0 1))
+  (take length (help-f 0 1)))
